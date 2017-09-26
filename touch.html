@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <script src="vue.js"></script>
+</head>
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+    }
+.router{
+    float: left;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    background: red;
+    color: #fff;
+}
+    .slide-enter-active {
+        transition: all .8s;
+    }
+    .slide-leave-active {
+        transition: all .8s;
+    }
+    .slide-enter
+    {
+        transform: translateY(100vh);
+    }
+    .slide-leave-to{
+        transform: translateY(-100vh);
+    }
+    .slide2-enter-active {
+        transition: all .8s;
+    }
+    .slide2-leave-active {
+        transition: all .8s;
+    }
+    .slide2-enter
+    {
+        transform: translateY(-100vh);
+    }
+    .slide2-leave-to{
+        transform: translateY(100vh);
+    }
+</style>
+<body>
+    <div id="app">
+        <transition :name="slide" v-for="(item,index) in list">
+            <div class="router"
+                 :style="'background:'+item.bg"
+                 v-if="index===showIndex"
+                 @touchmove="tab"
+                 @touchend="end"
+                 @touchstart="start">
+                {{item.content}}
+            </div>
+        </transition>
+    </div>
+</body>
+<script>
+    new Vue({
+        el:"#app",
+        data:{
+            list:[
+                {content:"我的第1个页面",bg:"red"},
+                {content:"我的第2个页面",bg:"blue"},
+                {content:"我的第3个页面",bg:"black"},
+                {content:"我的第4个页面",bg:"green"}
+            ],
+            showIndex:0,
+            add:true,
+            clickPosition:0,
+            slide:''
+        },
+        methods:{
+            tab:function(e){
+                var nowPosition=e.touches[0].clientY
+                if(nowPosition>this.clickPosition){
+                    this.slide='slide2'
+                    if(this.add){
+                        var that=this
+                        setTimeout(function(){
+                            that.showIndex=that.down_index(that.showIndex)
+                        },1)
+                        that.add=false
+                    }
+                }else{
+                    this.slide='slide'
+                    var that=this
+                    if(this.add){
+                        setTimeout(function(){
+                            that.showIndex=that.add_index(that.showIndex)
+                        },20)
+                        that.add=false
+                    }
+                }
+            },
+            start:function(e){
+                this.clickPosition=e.touches[0].clientY
+            },
+            end: function () {
+                this.add=true
+            },
+            add_index: function (i) {
+                i++;
+                if(i==this.list.length){
+                    i=0
+                }
+                return i
+            },
+            down_index:function (i) {
+                i--;
+                if(i<0){
+                    i=this.list.length-1
+                }
+                return i
+            },
+        }
+    })
+    //ontouchstart ontouchmove ontouchend
+//    console.log(document.querySelector('html').setAttribute("style","font-size:"+document.body.clientWidth/375*20+"px"))
+</script>
+</html>
